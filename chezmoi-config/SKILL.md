@@ -200,6 +200,14 @@ linux:
     enabled = true
     work_email = "{{ promptString "work email" }}"
 {{ end }}
+
+### 6. Interpret `chezmoi managed` / `chezmoi unmanaged` Output (Config Files)
+
+When reviewing `chezmoi unmanaged`, note that the *destination* config file is `~/.config/chezmoi/chezmoi.toml`, while the *source* is typically managed as a template such as `dot_config/chezmoi/chezmoi.toml.tmpl` (or `private_dot_config/chezmoi/chezmoi.toml.tmpl`) in the chezmoi source state.
+
+If `~/.config/chezmoi` appears as unmanaged:
+- First check `chezmoi managed` to confirm whether the config file is already managed in source.
+- If it is not managed, add it as a template and manage it in source (recommended when you maintain machine-specific values in `chezmoi.toml`).
 ```
 
 ### 6. Manage run_once Scripts
