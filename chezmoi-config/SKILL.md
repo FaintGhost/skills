@@ -16,6 +16,7 @@ Comprehensive guide for managing chezmoi dotfiles with templates, scripts, exter
 NEVER execute these commands - they will modify your system:
 - `chezmoi apply` - Applies changes to your home directory
 - `chezmoi apply --force` - Forcefully applies changes
+- `chezmoi update` - Updates source state and may change managed files
 - Any operations that directly execute scripts (scripts run automatically during `chezmoi apply`)
 
 ### Allowed Safe Operations
@@ -36,6 +37,8 @@ ONLY use these read-only validation commands:
 This skill helps you **create and validate** chezmoi configurations. To apply changes, **you must manually run** `chezmoi apply` in your terminal after reviewing the output.
 
 ## Quick Start
+
+**禁止执行 `chezmoi update`（会更新 source state 并可能变更受管文件）。**
 
 ### Creating a New Template
 
@@ -288,6 +291,9 @@ chezmoi apply
 # Dry run (preview changes) - SAFE
 chezmoi apply --dry-run
 
+# ⚠️ FORBIDDEN - Update source state (may change managed files)
+chezmoi update
+
 # Edit source state - SAFE
 chezmoi cd
 
@@ -338,6 +344,8 @@ Standard chezmoi source state structure:
 ```
 
 ## Debugging
+
+**注意：调试时也不要执行 `chezmoi update`，如需检查变更请用 `chezmoi diff` 或 `chezmoi apply --dry-run`。**
 
 **Verbose output:**
 ```bash
