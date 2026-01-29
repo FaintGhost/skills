@@ -28,6 +28,7 @@ ONLY use these read-only validation commands:
 - `chezmoi data` - Display template data variables (safe)
 - `chezmoi managed` - List files currently managed by chezmoi (read-only, safe)
 - `chezmoi unmanaged` - List files currently unmanaged by chezmoi (read-only, safe)
+- `chezmoi ignored` - List files ignored by chezmoi (read-only, safe)
 - `chezmoi execute-template < file.tmpl` - Preview expanded template output (safe)
 - `chezmoi state dump` - View script execution state (safe)
 - `chezmoi verify` - Verify source state integrity (safe)
@@ -92,6 +93,7 @@ This skill includes comprehensive reference documentation. Consult these guides 
 
 - **[template-syntax.md](references/template-syntax.md)** - Go template syntax, variables, conditionals, loops, and examples
 - **[external-files.md](references/external-files.md)** - .chezmoiexternal configuration for files, archives, and git repositories
+- **[ignore-files.md](references/ignore-files.md)** - .chezmoiignore/.chezmoiignore.tmpl patterns, templates, and scope
 - **[password-managers.md](references/password-managers.md)** - Integrating 20+ password managers (1Password, Bitwarden, Vault, etc.)
 - **[scripts.md](references/scripts.md)** - run_once, run_onchange, run_before, run_after scripts
 - **[advanced-configuration.md](references/advanced-configuration.md)** - .chezmoi.toml, prompting, encryption, and advanced features
@@ -200,17 +202,34 @@ linux:
     enabled = true
     work_email = "{{ promptString "work email" }}"
 {{ end }}
+```
 
-### 6. Interpret `chezmoi managed` / `chezmoi unmanaged` Output (Config Files)
+### 6. Ignore Files Conditionally
+
+**.chezmoiignore (template-aware):**
+```text
+README.md
+*.log
+
+{{- if ne .chezmoi.hostname "work-laptop" }}
+.work
+{{- end }}
+
+{{- if eq .chezmoi.os "windows" }}
+Documents/*
+!Documents/*PowerShell/
+{{- end }}
+```
+
+### 7. Interpret `chezmoi managed` / `chezmoi unmanaged` Output (Config Files)
 
 When reviewing `chezmoi unmanaged`, note that the *destination* config file is `~/.config/chezmoi/chezmoi.toml`, while the *source* is typically managed as a template such as `dot_config/chezmoi/chezmoi.toml.tmpl` (or `private_dot_config/chezmoi/chezmoi.toml.tmpl`) in the chezmoi source state.
 
 If `~/.config/chezmoi` appears as unmanaged:
 - First check `chezmoi managed` to confirm whether the config file is already managed in source.
 - If it is not managed, add it as a template and manage it in source (recommended when you maintain machine-specific values in `chezmoi.toml`).
-```
 
-### 6. Manage run_once Scripts
+### 8. Manage run_once Scripts
 
 **run_once_000-bootstrap.sh.tmpl:**
 ```bash
@@ -290,6 +309,8 @@ This skill can consult the latest chezmoi documentation via Context7 to ensure a
 "Check the chezmoi documentation for [topic]"
 ```
 
+If the question involves `.tmpl` behavior (especially `.chezmoiignore{,.tmpl}`), prefer checking the official docs first.
+
 ## Useful Commands
 
 ```bash
@@ -313,6 +334,9 @@ chezmoi doctor
 
 # View all template data - SAFE
 chezmoi data
+
+# List ignored files - SAFE
+chezmoi ignored
 
 # Test template (preview output) - SAFE
 chezmoi execute-template < ~/.local/share/chezmoi/dot_file.tmpl
@@ -341,6 +365,7 @@ Standard chezmoi source state structure:
 ~/.local/share/chezmoi/
 ├── .chezmoi.toml.tmpl          # Main configuration (optional)
 ├── .chezmoiexternal.toml.tmpl   # External resources (optional)
+├── .chezmoiignore.tmpl          # Ignore rules (template-aware, optional)
 ├── .chezmoidata/
 │   ├── packages.yaml            # Custom data
 │   └── work.yaml
@@ -380,6 +405,7 @@ chezmoi execute-template < template-file
 Use this skill whenever you're:
 - Creating new chezmoi templates with Go syntax
 - Modifying existing .chezmoi configuration files
+- Managing .chezmoiignore/.chezmoiignore.tmpl rules
 - Setting up .chezmoiexternal for external resources
 - Writing run_once/run_onchange scripts
 - Integrating password managers for secrets
