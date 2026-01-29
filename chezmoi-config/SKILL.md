@@ -26,6 +26,8 @@ ONLY use these read-only validation commands:
 - `chezmoi apply --dry-run` - Simulate changes without applying (safe)
 - `chezmoi doctor` - Check configuration validity (safe)
 - `chezmoi data` - Display template data variables (safe)
+- `chezmoi managed` - List files currently managed by chezmoi (read-only, safe)
+- `chezmoi unmanaged` - List files currently unmanaged by chezmoi (read-only, safe)
 - `chezmoi execute-template < file.tmpl` - Preview expanded template output (safe)
 - `chezmoi state dump` - View script execution state (safe)
 - `chezmoi verify` - Verify source state integrity (safe)
@@ -37,8 +39,6 @@ ONLY use these read-only validation commands:
 This skill helps you **create and validate** chezmoi configurations. To apply changes, **you must manually run** `chezmoi apply` in your terminal after reviewing the output.
 
 ## Quick Start
-
-**禁止执行 `chezmoi update`（会更新 source state 并可能变更受管文件）。**
 
 ### Creating a New Template
 
